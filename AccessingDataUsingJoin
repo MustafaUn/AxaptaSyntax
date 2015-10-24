@@ -1,0 +1,23 @@
+static void UsingJoin(Args _args)
+{
+    CustTable custTable;
+    CustTrans custTrans;
+    container conCompanies = ['cee', 'ceu'];
+
+
+    while select AccountNum from custTable
+        join custTrans
+        where (custTrans.AccountNum == custTrans.AccountNum)
+        && custTrans.AccountNum == "001"
+    {
+        print custTable.accountNum, " ", custTrans.Voucher, ' ', date2str(custTrans.TransDate, 213, 1, 4, 2, 4, 2);
+    }
+
+    print "**** cross companies ****";
+    while select crossCompany : conCompanies custTable
+    {
+        print custTable.AccountNum  ;
+    }
+
+    pause;
+}

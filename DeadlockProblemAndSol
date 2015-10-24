@@ -1,0 +1,53 @@
+static void Dev3Lab23(Args _args)
+{
+    InventTable inventTable;
+    VendTable vendTable;
+    
+    
+    /*
+    ttsBegin;
+    while select forUpdate inventTable
+    {
+        if(vendTable::find(inventTable.PrimaryVendorId).Blocked == CustVendorBlocked::All)   
+        {
+            inventTable.PrimaryVendorId = "";   
+            inventTable.update();
+        }
+        
+    }
+    ttsCommit;
+    */
+    
+    //============= solution 1 for deadlock above ================================
+    //declare a new variable called InventTableUpdate
+    // and updates are done against this variable, so that we don't have to lock the whole table
+    InventTable inventTableUpdate;
+    ttsBegin;
+    while select inventTable
+    {
+        if(vendTable::find(InventTable.PrimaryVendorId).Blocked == CustVendorBlocked::All)   
+        {
+            inventTableUpdate = InventTable::find(inventTable.ItemId, true);
+            inventTableUpdate.PrimaryVendorId = "";
+            inventTableUpdate.update();
+        }
+        
+    }   
+    ttsCommit;
+    
+    
+    //============== solution 2 for deadlock above ================================
+    //replace "IF" and "Find" on VendTable by "exists join" on VendTable
+    ttsBegin;
+    while select forUpdate inventTable
+        exists join vendTable
+        where vendTable.AccountNum == inventTable.PrimaryVendorId 
+        && vendTable.Blocked == CustVendorBlocked::All
+    {
+        inventTable.PrimaryVendorId = "";   
+        inventTable.update();
+    }    
+    ttsCommit;
+    print 'get to here';
+    pause;
+}

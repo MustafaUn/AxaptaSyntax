@@ -1,0 +1,23 @@
+static void Lab43Query(Args _args)
+{
+    Query query;
+    QueryRun queryRun;
+    QueryBuildDataSource qbds;
+    QueryBuildRange qbr;
+    VendTable vendTable;
+
+    query = new query();
+    qbds = query.addDataSource(tableNum(VendTable));
+    qbr = qbds.addRange(fieldNum(VendTable, VendGroup));
+    qbr.value('50');
+    qbds.addOrderByField(fieldNum(VendTable, AccountNum));
+
+    queryRun = new queryRun(query);
+    if(queryRun.prompt()){
+        while(queryRun.next()){
+            vendTable = queryRun.get(tableNum(VendTable));
+            info(VendTable.name());
+        }
+    }
+    pause;
+}

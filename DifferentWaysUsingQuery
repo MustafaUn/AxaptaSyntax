@@ -1,0 +1,53 @@
+//========================= Method 1: Construct Query object dynamically ================================//
+static void Dev3Lab22Part2(Args _args)
+{
+    Query query;
+    QueryBuildDataSource queryBuildDataSource;
+    QueryBuildRange queryBuildRange;
+    QueryRun queryRun;
+    Qty total;
+    InventTrans inventTrans;
+    InventDim inventDim;
+
+    query = new query();    //instantiate query object
+    
+    //construct first data source, field list
+    queryBuildDataSource = query.addDataSource(tableNum(inventTrans));
+    queryBuildDataSource.addSelectionField(fieldNum(inventTrans, Qty), SelectionField::Sum);
+    queryBuildRange = queryBuildDataSource.addRange(fieldNum(inventTrans, ItemId));
+    //queryFilter = query.addQueryFilter(queryBuildDataSource,identifierStr(ItemId));
+    
+    //construct second data source, cuz we calc sum of qty, we must group by inventBatchID
+    queryBuildDataSource = queryBuildDataSource.addDataSource(tableNum(inventDim));
+    queryBuildDataSource.addGroupByField(fieldNum(inventDim,InventBatchId));
+    
+    queryBuildDataSource.relations(true); //indicate these 2 tables have relations
+    
+    //run query
+    queryRun = new queryRun(query);
+    if(queryRun.prompt())
+    {
+     while(queryRun.next()){
+            inventTrans = queryRun.get(tableNum(inventTrans));
+            inventDim = queryRun.get(tableNum(inventDim));
+            info(strFmt("Batch %1. qty %2", inventDim.inventBatchId, inventTrans.Qty));
+        }
+    }
+    pause;
+}
+//========================== Method 2: using while select ===================================
+static void Dev3Lab22(Args _args)
+{
+    InventTrans inventTrans;
+    InventDim inventDim;
+
+    while select sum(Qty) from inventTrans
+        where inventTrans.ItemId == "A0001"
+        join inventDim
+        group by InventBatchId
+        where inventDim.inventDimId == inventTrans.inventDimId
+    {
+        info(strFmt("Batch %1, qty %2", inventDim.inventBatchId, inventTrans.Qty));
+    }
+    pause;
+}

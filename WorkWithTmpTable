@@ -1,0 +1,56 @@
+static void Dev3Lab24(Args _args)
+{
+    TmpSum a;
+    TmpSum b;
+    Counter counter;
+    void countRecords(TmpSum _tmptable, str _step, str _name) {
+        select count(RecId) from _tmptable ;  
+        info(strFmt("Step %1 - %2 records in %3", _step, _tmptable.RecId, _name));
+        
+    };
+    ttsBegin;
+    //insert records in 'a'
+    for(counter = 1; counter <= 1000; counter++) {
+        a.Key = num2str(counter, 1, 0, 0, 0);   
+        a.Balance01 = counter;
+        a.insert();
+    }
+    //verify that insert in 'a' does not affect 'b'
+    countRecords(a, "2", "a");
+    countRecords(b, "2", "b");
+    //copy all records from 'a' to 'b'
+    b.skipDataMethods(true);
+    insert_recordset b(Key, Balance01)
+    select Key, Balance01 from a;
+    
+    countRecords(a, "3", "b");
+    countRecords(b, "3", "b");
+    //delete one record from 'a'
+    select forUpdate a;
+    a.delete();
+    
+    //verify the contents of the two tables are not equal
+    countRecords(a, "4", "a");
+    countRecords(b, "4", "b");
+    
+    //call setTmpData method to make 2 temp table point to the same data pool
+    b.setTmpData(a);
+    //insert 10 new records in a
+    for(counter = 1001; counter <= 1010; counter++){
+        a.Key = num2str(counter, 1, 0,0, 0);   
+        a.Balance01 = counter;
+        a.insert();
+    }
+    //verify the contents of the two tables are equal
+    countRecords(a, "5", "a");
+    countRecords(b, "5", "b");
+    //delete one record from a
+    select forUpdate a;
+    a.delete();
+    //verify the two tables are equal
+    countRecords(a, "6", "a");
+    countRecords(b, "6", "b");
+    ttsCommit;
+    
+    pause;
+}

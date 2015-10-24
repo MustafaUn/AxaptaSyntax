@@ -1,0 +1,54 @@
+static void SelectWithKeyWords(Args _args)
+{
+    CustTable custTable;
+    int accountLen;
+    Counter i;
+    //key words firstOnly
+    print "****** using firstOnly in select statement ******";
+    select firstOnly custTable;
+    print "first only: " + custTable.AccountNum;
+    
+    print "****** using firstonly with field value in select statement ******";
+    select firstOnly AccountNum from custTable ;
+    print "Account = " + custTable.AccountNum;
+    
+    //key words count
+    print "****** using count keyword in select statement ******";
+    select count(AccountNum) from custTable;
+    print "total account: " + custTable.AccountNum;
+    
+    //find length of a field in a table
+    print "****** using length in select statement ******";
+    select AccountNum from custTable where custTable.AccountNum == "DE-001";
+    accountLen = strLen(custTable.AccountNum);
+    print "length of accountnum: " + num2str(accountLen, -1, -1, -1, -1);
+    
+    //select field list
+    print "****** using field list in select statement ******";
+    select AccountNum, CreditMax from custTable where custTable.AccountNum == "DE-001";
+    print "select fields: " + custTable.AccountNum + " " + num2str(custTable.CreditMax,-1,-1,-1, -1);
+    
+    //using while select
+    print "****** using while in select statement ******";
+    while select reverse firstOnly AccountNum, Currency, CreditMax from custTable {
+     print custTable.AccountNum , " " , custTable.Currency , " " , custTable.CreditMax;   
+    }
+    
+    //using Ranges in select statement
+    print "****** using ranges in select statement ******";
+    while select custTable
+            where custTable.AccountNum == "US-040"
+            || custTable.AccountNum == "DE-001"
+    {
+        print custTable.AccountNum , " " , custTable.Currency;     
+    }
+    
+    //using sorting operation
+    print "****** using sorting operation by using idx in select statement ******";
+    while select reverse firstOnly10 custTable index AccountIdx order by AccountNum asc
+    {
+        print custTable.AccountNum , " " , custTable.Currency;   
+    }
+    pause;
+    
+}

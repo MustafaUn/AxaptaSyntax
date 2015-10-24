@@ -1,0 +1,19 @@
+static void CreateANewList(Args _args)
+{
+    List list = new List(Types::Integer);
+    ListEnumerator enumerator;
+    
+    list.addEnd(1);
+    list.addStart(2);
+    list.addEnd(3);
+    
+    //set the enumerator
+    enumerator = list.getEnumerator();
+    //go to the beginning of the list
+    enumerator.reset();
+    while(enumerator.moveNext())
+    {
+        print "Current: ", " ", enumerator.current();   
+    }
+    pause;
+}

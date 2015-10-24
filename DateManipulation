@@ -1,0 +1,62 @@
+static void DataManipulation(Args _args)
+{
+    CarTable carTable;
+    RentalTable rentalTable;
+    
+    ttsBegin;
+    select forUpdate carTable
+    where carTable.CarId == "1";
+    carTable.CarMileage = 100;
+    carTable.update();
+    ttsCommit;
+    
+    /*
+    carTable.CarId = "4";
+    carTable.CarBrand ="Ferrari";
+    carTable.Model = "Sport";
+    carTable.ModelYear = 2012;
+    carTable.insert();
+    */
+    
+    /*
+    update_recordSet carTable
+    setting ModelYear = 2015
+    where carTable.CarId == "4";
+    
+    print "update again";
+    
+    ttsBegin;
+    select forUpdate carTable
+    where carTable.CarId == "4";
+    carTable.ModelYear = 2020;
+    carTable.update();
+    ttsCommit;
+    */
+    
+    /*
+    ttsBegin;
+    select forUpdate carTable
+    where carTable.CarId == "4";    
+    carTable.delete();
+    ttsCommit;
+    */
+    
+    /*
+    delete_from carTable
+    where carTable.CarId == "4";
+    */
+    print "update successfully!";
+    
+    ttsBegin;
+    while select forUpdate rentalTable
+        join carTable
+        where carTable.CarId == rentalTable.CarId
+        && rentalTable.RentalId == "4"
+    {
+        rentalTable.ToDate = mkDate(29,8,2015);
+        rentalTable.update();
+    }
+    ttsCommit;
+    
+    pause;    
+}

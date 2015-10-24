@@ -1,0 +1,28 @@
+static void Datatypes_container_functions(Args _args)
+{
+    // === use Container class to store value list
+    container con;
+    RentalInfo rentalInfo;
+    
+    // === insert op ===
+    con = conIns(con, 1, "Toyota");
+    con = conIns(con, 2, 20);
+    con = conIns(con, 3, 2200.20);
+    con = conIns(con, 4, "BMW");
+    con = conIns(con, 5, 12);
+
+    // === delete op ===
+    con = conDel(con, 1,2);
+
+    // === peek op ===
+    info(conPeek(con,1));
+
+    // === empty container op ===
+    con = conNull();
+    info(strFmt("Length: %1", conLen(con)));
+ 
+    // === getters and setters ====
+    rentalInfo = new RentalInfo();
+    rentalInfo.setCar("BMW");
+    info(rentalInfo.getCar());
+}

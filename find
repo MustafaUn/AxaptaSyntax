@@ -1,0 +1,21 @@
+static CarTable find(CarId   _carId,
+                      boolean       _forUpdate = false)
+{
+    CarTable carTable;
+
+    if (_carId)
+    {
+        if (_forUpdate)
+        {
+            carTable.selectForUpdate(_forUpdate);
+        }
+
+        select firstonly carTable
+            index hint CarIdx
+            where carTable.CarId == _carId;
+    }
+
+    return carTable;
+}
+
+

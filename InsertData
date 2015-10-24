@@ -1,0 +1,23 @@
+static void CRUDOp(Args _args)
+{
+    CustTable custTable;
+    VendTable vendTable;
+    HcmWorker hcmWorker;
+    
+    //**** insert individual records to a database ****
+    custTable.AccountNum = "1234";
+    custTable.Currency = "USD";
+    custTable.insert();
+
+    //**** test to make sure the data has been saved to database *****
+    select AccountNum
+    from custTable where custTable.AccountNum == "1234";
+    print custTable.AccountNum, " " , custTable.Currency;
+    
+    //**** insert record set *****
+    insert_recordset vendTable(AccountNum, Party)
+    select PersonnelNumber, Person from hcmWorker;
+
+    
+    pause;
+}

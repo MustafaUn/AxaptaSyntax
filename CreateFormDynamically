@@ -1,0 +1,73 @@
+/*
+    step 1: create a Form object
+    step 2: add a datasource to the form using: form.addDataSource()
+    step 3: add a design to the form using: form.addDesign();
+    step 4: add the caption to the design using formBuildDesign.caption("caption_text");
+    step 5: add a control to a form using: formBuildTabControl.addControl();
+    step 6: add a data field to a control using: formBuildGridControl.addDataField();
+*/
+public static void createForm()
+{
+    Args args;
+    Form form;
+    FormRun formRun;
+    FormBuildDesign fbDesign;
+    FormBuildDataSource fbDS;
+    FormBuildGridControl fbGrid;
+    FormBuildStringControl fbStr1;
+    FormBuildStringControl fbStr2;
+    FormBuildTabControl fbTab;
+    FormBuildTabPageControl fbTabPage1;
+    FormBuildTabPageControl fbTabPage2;
+    DictTable dictTable;
+    int idx, idx2, idx3;
+
+    //use these for method: addControl on the FormBuild<Control_Name>Control.addControl
+    FormControlType fctTabPage = FormControlType::TabPage;
+    FormControlType fctTab = FormControlType::Tab;
+    FormControlType fctGrid = FormControlType::Grid;
+    FormControlType fctString = FormControlType::String;
+
+    //create the form header
+    form = new Form();
+    //add a data source to the form
+    dictTable = new DictTable(tableNum(CustTable));
+    fbDS = form.addDataSource(dictTable.name());
+    fbDS.table(dictTable.id()); //get or set table id associated with the object
+    //create the form design
+    fbDesign = form.addDesign("Design");
+    fbDesign.caption("Customer information");
+    //Add tab
+    fbTab = fbDesign.addControl(fctTab, "Overview");
+    //Add tab page:
+    fbTabPage1 = fbTab.addControl(fctTabPage, "Overview");
+    fbTabPage1.caption("Overview");
+    fbTabPage2 = fbTab.addControl(fctTabPage, "General");
+    fbTabPage2.caption("General");
+    //Add grid onto tab1 and data fields onto grid
+    fbGrid = fbTabPage1.addControl(fctGrid, "Table Grid");
+    fbGrid.addDataField(fbDS.id(), dictTable.fieldName2Id("AccountNum"));
+    fbGrid.addDataField(fbDS.id(), dictTable.fieldName2Id("CustGroup"));
+    fbGrid.addDataField(fbDS.id(), dictTable.fieldName2Id("Currency"));
+    //Add a string fields to tab 2, and assign datasource
+    fbStr1 = fbTabPage2.addControl(fctString, "String 1");
+    fbStr1.dataSource(fbDS.id());
+    fbStr1.dataField(dictTable.fieldName2Id("AccountNum"));
+
+    fbStr2 = fbTabPage2.addControl(fctString, "String 2");
+    fbStr2.dataSource(fbDS.id());
+    fbStr2.dataField(dictTable.fieldName2Id("CustGroup"));
+
+    //create run time form
+    args = new Args();
+    args.object(form);
+    formRun = classFactory.formRunClass(args);
+    formRun.run();
+    formRun.detach();
+}
+
+//then create a main method and run the code below to see a newly created form
+public static void main(Args _args)
+{
+    CreateForm::createForm();
+}

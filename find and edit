@@ -1,0 +1,24 @@
+display Brand brand()
+{
+    Name ret;
+    ret = CarTable::find(this.CarId).CarBrand;
+    return ret;
+}
+
+edit Mileage mileage(boolean set, Mileage value)
+{
+    CarTable carTable;
+    Mileage ret;
+
+    carTable = CarTable::find(this.CarId, set);
+    if(set){
+     ttsBegin;
+     carTable.Mileage = value;
+     carTable.update();
+     ttsCommit;
+    }
+    else{
+     ret = carTable.Mileage;
+    }
+    return ret;
+}

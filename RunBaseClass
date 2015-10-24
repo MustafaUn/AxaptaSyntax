@@ -1,0 +1,69 @@
+/*
+  Steps to create a RunBase class:
+  Step 1: Create a class that extends the RunBase
+  Step 2: add member varaibles into classDeclaration, these usually are: DialogField (for dialog itself), Extended Data Type(for manipulating data)
+  Step 3: override method dialog(). 
+  Step 4: override method getFromDialog()
+  Step 5: override method pack()
+  Step 6: override method unpack()
+  Step 7: override method run(). This method typically perform select query and stuff
+  Step 8: create a static void Main(Args _args) to execute the run() method from step 7
+*/
+//========== Step 1, 2 =================
+class SAlesCalcAverageSalesPrice extends RunBase
+{
+  DialogField dlgFromDate, dlgToDate, dlgItemId;
+  FromDate fromDate;
+  ToDate toDate;
+  ItemId itemId;
+}
+//========== Step 3 =================
+public Object dialog()
+{
+  Dialog dlg = super();
+  dlgFromDate = dlg.addField(identifierStr(FromDate));
+  dlgToDate = dlg.addField(identifierStr(ToDate));
+  dlgItemId = dlg.addField(identifierStr(ItemId));
+  return dlg;
+}
+//========= Step 4 =================
+public bool getFromDialog()
+{
+  boolean ret;
+  fromDate = dlgFromDate.value();
+  toDate = dlgToDate.value();
+  itemId = dlgItemId.value();
+  
+  ret = super();
+  return ret;
+}
+//========= Step 5 ==================
+public container pack()
+{
+  return conNull();
+}
+
+//======== Step 6 =================
+public boolean unpack(container packedClass)
+{
+  return true;
+}
+
+//======== Step 7 ===============
+public void run()
+{
+  CustInvoiceTrans custInvoiceTrans;
+  select sum(SalesPrice), sum(Qty) from custInvoiceTrans
+  where custInvoiceTrans.ItemId == itemId
+  && custInvoiceTrans.InvoiceDate >= fromDate
+  && custInvoiceTrans.InvoiceDate <= toDate;
+  
+  if(custInvoiceTrans.Qty)
+  {
+    info(strFmt("Average sales price is %1", custInvoiceTrans.SalesPrice/custInvoiceTrans.Qty));
+  }
+  else
+  {
+    info("No sale found");
+  }
+}
